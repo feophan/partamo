@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { xml, fileUploaded } from '$lib/stores.js';
+    import { xml, fileUploaded, fileName } from '$lib/stores.js';
     import { buttonVariants } from "$lib/components/ui/button";
     import Upload from "svelte-radix/Upload.svelte";
 
@@ -20,6 +20,8 @@
             }
             xml.set(doc);
             fileUploaded.set(true); // Set the fileUploaded store to true
+            fileName.set(files[0].name);
+            // console.log(files[0].name.replace(/\.xml$/, ""));
 
             // Manually reset the file input value to allow the same file to be selected again
             fileInput.value = '';

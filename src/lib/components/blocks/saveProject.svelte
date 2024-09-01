@@ -1,11 +1,11 @@
 <script lang="ts">
-  let fileName = "document.xml"; // The name of the file to download
-  import { xml } from '$lib/stores.js';
+  import { xml, fileName } from '$lib/stores.js';
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "svelte-radix/Download.svelte";
   
   // Sample document content
   $: book = $xml;
+  $: name = $fileName;
 
   let doc: string = '';
 
@@ -23,13 +23,9 @@
               if (minorVersionAttr !== null) {
                   let vMinor = parseInt(minorVersionAttr, 10); // Ensure to use base 10
                   vMinor += 1; // Increment the minor version (instead of doubling it)
-                  version.setAttribute('minor', vMinor.toString());
-                  console.log(version);
-                  
+                  version.setAttribute('minor', vMinor.toString());                  
                   // Update the xml store to reflect this change
                   xml.set(book); // This updates the store with the modified document
-                  console.error("Updated version");
-
                   // Update the doc variable with the new XML content
                   doc = book.documentElement.outerHTML;
               } else {
@@ -56,7 +52,7 @@
       // Create a temporary link element
       const a = document.createElement("a");
       a.href = url;
-      a.download = fileName;
+      a.download = name;
 
       // Append the link to the document and click it to trigger download
       document.body.appendChild(a);
