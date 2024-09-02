@@ -1,5 +1,5 @@
 <script lang="ts">
-    import EditWord from '$lib/components/blocks/editWord.svelte';
+    import EditWord from '$lib/components/blocks/menuWord.svelte';
     export let node: Element;
 
     type TagMap = {

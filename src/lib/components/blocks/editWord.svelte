@@ -4,6 +4,9 @@
     import Meta from "./metaInfo.svelte";
     import { toast } from "svelte-sonner";
 
+    export let isOpenEdit: boolean;
+    export let setIsOpen = () => {};
+
     export let word: string | null = '';
     export let attributes: Record<string, string>;
 
@@ -12,11 +15,10 @@
     // Auto-subscribe to stores using the `$` prefix
     $: book = $xml;
 
-    let open = false;
-
     // To hold the edited state
     let editedWord: string | null = word;
     let editedAttributes: Record<string, string> = { ...attributes };
+
 
     function updateMeta(key: string, value: string) {
         if (key === 'word') {
@@ -40,7 +42,7 @@
 
                 // Update the xml store to reflect this change
                 xml.set(book); // This updates the store with the modified document
-                open = false;
+                isOpenEdit = false;
                 toast.success("Updated word", {
                     description: `${wordId}: ${editedWord}`
                 });
@@ -51,11 +53,9 @@
             toast.error("Invalid word ID or XML document.");
         }
     }
-
 </script>
 
-<Dialog.Root bind:open>
-    <Dialog.Trigger {...attributes}>{word}</Dialog.Trigger>
+<Dialog.Root open={isOpenEdit} onOpenChange={setIsOpen}>
     <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title>Edit word</Dialog.Title>
