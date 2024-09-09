@@ -41,7 +41,7 @@
 </script>
 
 {#if $fileUploaded }
-    <div class="align-self-end">
+    <div>
         <label for="project" class={`${buttonVariants({ variant: "ghost", size: "icon" })} text-primary-foreground hover:text-secondary-foreground`}>
             <Upload class="w-4 h-4"/>
         </label>
@@ -56,7 +56,7 @@
         />
     </div>
 {:else}
-    <div class="align-self-end">
+    <div>
         <label for="project" class={buttonVariants({ variant: "outline" })}>Select Project</label>
         <input
             accept=".xml"

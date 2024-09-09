@@ -35,7 +35,7 @@
 </script>
 
 {#if root}
-<div class="px-2 mb-2">
+<div class="px-6 mb-2">
     <Badge class="bg-primary-foreground/20">{root.getAttribute('major')}.{root.getAttribute('minor')}</Badge>
 </div>
 {/if}

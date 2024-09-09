@@ -1,5 +1,6 @@
 <script lang="ts">
     import { xml, lang } from '$lib/stores.js';
+    import { langs } from '$lib/store-settings.js';
     import { onMount } from 'svelte';
     import Letter from "svelte-radix/LetterCaseCapitalize.svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
@@ -9,14 +10,6 @@
         value: string;
         label: string;
     }
-
-    const langs: Selection[] = [
-        { value: "en", label: "English" },
-        { value: "it", label: "Italian" },
-        { value: "la", label: "Latin" },
-        { value: "fr", label: "French" },
-        { value: "qy", label: "Quenya" }
-    ];
 
     let lang_list: Selection[] = []; // Available languages based on the document
     let selectedLangs: Selection[] = []; // Array of selected languages
@@ -32,9 +25,10 @@
     // Function to update the language list and selected languages
     const updateLangList = () => {
         if (!book) return;
-
         const availableLangs = parse(book);
-        lang_list = langs.filter(lang => availableLangs.includes(lang.value));
+        // Cast the result of JSON.parse to an array of Selection
+        const parsedLangs = JSON.parse($langs) as Selection[]; 
+        lang_list = Array.from(parsedLangs).filter(lang => availableLangs.includes(lang.value));
 
         // Keep only valid selected languages
         selectedLangs = selectedLangs.filter(selectedLang => availableLangs.includes(selectedLang.value));
