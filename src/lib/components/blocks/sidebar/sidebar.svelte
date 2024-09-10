@@ -5,7 +5,6 @@
     import ChapterList from './chapterList.svelte';
     import LangBar from './langBar.svelte';
     import Version from './versionControl.svelte';
-    import SettingBlock from './settingBlock.svelte';
 </script>
 
 <div class="h-screen pb-12 pt-24 lg:block fixed w-40 bg-primary">
