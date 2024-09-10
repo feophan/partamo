@@ -11,7 +11,7 @@
         type?: string; // Optional type (e.g., 'main' or 'sub' for 'head')
         htmlTag: string;
         className: string;
-        };
+    };
 
     $: tagDefinitions = JSON.parse($tags) as TagDefinition[];
 
@@ -19,19 +19,23 @@
         const normalizedNodeName = node.nodeName;
         const type = node.getAttribute('type') || null;
 
-        const tagDef = (type === null) ? tagDefinitions.find(def => def.name === normalizedNodeName) : tagDefinitions.find(def => def.name === normalizedNodeName && (def.type === type));
+        const tagDef = type === null
+            ? tagDefinitions.find(def => def.name === normalizedNodeName)
+            : tagDefinitions.find(def => def.name === normalizedNodeName && def.type === type);
 
         return tagDef ? tagDef.htmlTag : 'span'; // Fallback to 'span' if tag not found
-        }
+    }
 
     function getClass(node: Element): string {
         const normalizedNodeName = node.nodeName;
         const type = node.getAttribute('type') || null;
 
-        const tagDef = (type === null) ? tagDefinitions.find(def => def.name === normalizedNodeName) : tagDefinitions.find(def => def.name === normalizedNodeName && (def.type === type));
+        const tagDef = type === null
+            ? tagDefinitions.find(def => def.name === normalizedNodeName)
+            : tagDefinitions.find(def => def.name === normalizedNodeName && def.type === type);
 
         return tagDef ? tagDef.className : ''; // Fallback to empty string if no class found
-        }
+    }
 
     function getDataAttributes(node: Element): Record<string, string> {
         const dataAttributes: Record<string, string> = {};
@@ -54,7 +58,7 @@
             let ref: Array<string> = JSON.parse(target.getAttribute('data-ref') as string);
             ref.forEach((e: string) => {
                 const el = document.getElementById(e);
-                if (el) {el.classList.add("bg-orange-500", "text-zinc-100", "rounded", "px-1")}
+                if (el) { el.classList.add("bg-orange-500", "text-zinc-100", "rounded", "px-1") }
             });
         }
     }
@@ -63,26 +67,44 @@
         const target = event.target as HTMLElement;
         if (target && target.getAttribute('data-ref')) {
             let ref: Array<string> = JSON.parse(target.getAttribute('data-ref') as string);
-            ref.forEach((e:string) => {
+            ref.forEach((e: string) => {
                 const el = document.getElementById(e);
-                if (el) {el.classList.remove("bg-orange-500", "text-zinc-100", "rounded", "px-1")}
+                if (el) { el.classList.remove("bg-orange-500", "text-zinc-100", "rounded", "px-1") }
             });
         }
     }
-    
+
     function updateNodeContent(event: Event) {
         const target = event.target as HTMLElement;
-        // Update the node with the new text content
-        node.textContent = target.textContent;
-        // Optionally dispatch an event or call a function to save changes to a backend
-        dispatch('updateNode', node);
+        // Update only if the content actually changed to avoid excessive re-renders
+        if (target.textContent !== node.textContent) {
+            // Update the node with the new text content
+            node.textContent = target.textContent;
+            dispatch('updateNode', node);
+        }
+    }
+
+    function handleFocus(event: FocusEvent) {
+        const target = event.target as HTMLElement;
+
+        // If the content is a non-breaking space, clear it so the user can start typing
+        if (target.innerHTML === "&nbsp;" || target.innerHTML === "") {
+            target.innerHTML = "";
+        }
+    }
+
+    function handleBlur(event: FocusEvent) {
+        const target = event.target as HTMLElement;
+
+        // If the content is empty after blur, set it back to a non-breaking space
+        if (target.textContent?.trim() === "") {
+            target.innerHTML = "&nbsp;";
+        }
     }
 
     function isTextOnly(node: Element): boolean {
-    // Check if all child nodes are text nodes, ignoring attributes
-    return Array.from(node.childNodes).every(child => child.nodeType === Node.TEXT_NODE);
-}
-
+        return Array.from(node.childNodes).every(child => child.nodeName !== 'w');
+    }
 </script>
 
 <!-- Render dynamic HTML elements -->
@@ -91,14 +113,16 @@
     this={getTagName(node)}
     class={getClass(node)}
     {...getDataAttributes(node)}
-    contentEditable={!((node.nodeName === 'w') || !isTextOnly(node))}
+    contentEditable={isTextOnly(node)}
     on:mouseover={handleMouseOver}
     on:focus={handleMouseOver}
+    on:focus={handleFocus}
     on:mouseleave={handleMouseOut}
     on:blur={handleMouseOut}
+    on:blur={handleBlur}
     on:input={updateNodeContent}>
+    
     {#if node.nodeName.toLowerCase() === 'w'}
-        <!-- Render the custom word component -->
         <EditWord attributes={getDataAttributes(node)} word={node.textContent} />
     {:else}
         {#each Array.from(node.childNodes) as child}

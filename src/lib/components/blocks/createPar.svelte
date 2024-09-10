@@ -14,6 +14,7 @@
           chapters.forEach((e) => {
             const newPar = book.createElement("p");
             newPar.setAttribute("n",lastPar ? (parseInt(lastPar)+1).toString() : "1");
+            newPar.textContent = " ";
             e.appendChild(newPar);
           });
           xml.set(book);
