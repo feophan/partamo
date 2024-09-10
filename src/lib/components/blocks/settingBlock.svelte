@@ -8,7 +8,7 @@
 
     import Icon from "svelte-radix/Gear.svelte";
 
-    import { langs } from '$lib/store-settings.js';
+    import { langs, tags } from '$lib/store-settings.js';
     
 </script>
 
@@ -35,7 +35,9 @@
             <Tabs.Content value="languages">
                 <Textarea id="languages" bind:value={$langs} class="h-32"/>
             </Tabs.Content>
-            <Tabs.Content value="components">Define XML components here.</Tabs.Content>
+            <Tabs.Content value="components">
+                <Textarea id="components" bind:value={$tags} class="h-32"/>
+            </Tabs.Content>
         </Tabs.Root>
     </div>
     </Dialog.Content>

@@ -1,63 +1,36 @@
 <script lang="ts">
     import EditWord from '$lib/components/blocks/menuWord.svelte';
+    import { tags } from '$lib/store-settings.js';
     export let node: Element;
 
-    type TagMap = {
-        head: Head;
-        p: string;
-        emph: string;
-        w: string;
-    }
+    type TagDefinition = {
+        name: string;
+        type?: string; // Optional type (e.g., 'main' or 'sub' for 'head')
+        htmlTag: string;
+        className: string;
+        };
 
-    type Head = {
-        main: string;
-        sub:  string;
-    }
+    $: tagDefinitions = JSON.parse($tags) as TagDefinition[]; 
 
-    type HeadKey = keyof Head;
-
-    const tagMap: TagMap = {
-        head: {
-            main: 'h1',
-            sub: 'h2'
-        },
-        p: 'p',
-        emph: 'span',
-        w: 'span'
-    };
-
-    function normalizeNodeName(name: string): keyof TagMap | 'head' {
-        return name.toLowerCase() as keyof TagMap | 'head';
-    }
+    console.log($tags);
 
     function getTagName(node: Element): string {
-        const normalizedNodeName = normalizeNodeName(node.nodeName);
+        const normalizedNodeName = node.nodeName;
+        const type = node.getAttribute('type') || null;
 
-        if (normalizedNodeName === 'head') {
-            const attribute = node.attributes[0]?.value as HeadKey || 'main';
-            return tagMap.head[attribute] || 'h1';
-        } else {
-            return tagMap[normalizedNodeName] || 'span';
+        const tagDef = tagDefinitions.find(def => def.name === normalizedNodeName && (!def.type || def.type === type));
+
+        return tagDef ? tagDef.htmlTag : 'span'; // Fallback to 'span' if tag not found
         }
-    }
 
     function getClass(node: Element): string {
-        const normalizedNodeName = normalizeNodeName(node.nodeName);
-        if (normalizedNodeName === 'head') {
-            if (!(node.attributes[0]) || node.attributes[0].value === 'main') {
-                return 'text-blue-500 font-bold';
-            } else if (node.attributes[0]?.value === 'sub') {
-                return 'text-sky-500 italic';
-            }
-        } else if (normalizedNodeName === 'emph') {
-            return 'italic';
-        } else if (normalizedNodeName === 'p') {
-            return 'before:content-[attr(data-n)] -indent-4 before:pr-2 before:text-slate-300';
-        } else if (normalizedNodeName === 'w') {
-            return 'hover:bg-sky-500 hover:text-zinc-100 hover:rounded hover:px-1 inline-flex';
+        const normalizedNodeName = node.nodeName;
+        const type = node.getAttribute('type') || null;
+
+        const tagDef = tagDefinitions.find(def => def.name === normalizedNodeName && (!def.type || def.type === type));
+
+        return tagDef ? tagDef.className : ''; // Fallback to empty string if no class found
         }
-        return '';
-    }
 
     function getDataAttributes(node: Element): Record<string, string> {
         const dataAttributes: Record<string, string> = {};
@@ -108,7 +81,7 @@
     on:mouseleave={handleMouseOut}
     on:blur={handleMouseOut}>
     {#if node.nodeName.toLowerCase() === 'w'}
-        <!-- Render the custom paragraph component -->
+        <!-- Render the custom word component -->
         <EditWord attributes={getDataAttributes(node)} word={node.textContent} />
     {:else}
         {#each Array.from(node.childNodes) as child}
