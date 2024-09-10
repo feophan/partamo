@@ -1,6 +1,7 @@
 <script lang="ts">
     import { xml, chapter } from '$lib/stores.js';
     import { Button } from "$lib/components/ui/button";
+    import Create from './createChapter.svelte';
 
     let book: Document | null;
 
@@ -60,5 +61,6 @@
         {:else}
             <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
         {/if}
+        <Create />
     </div>
 </div>

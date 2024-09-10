@@ -4,7 +4,7 @@
 
     let book: Document | null;
 
-    // Subscribe to xml and lang stores
+    // Subscribe to xml stores
     $: xml.subscribe((value: Document | null) => {
         book = value;
         updateRoot();  // Ensure root is updated when book changes
@@ -12,7 +12,7 @@
 
     let root: Element | null;
 
-    // Parse the book to get the chapters for the selected language
+    // Parse the book to get the document version
     function parse(book: Document): Element | null {
 
         if (book == null || book.querySelector('parsererror')) {

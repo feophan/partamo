@@ -60,16 +60,16 @@
     return interleavedChildren;
 }
 
-
-
+function updateNodeInXML() {
+        // Update the $xml store with the modified document
+        xml.set(book);
+    }
 
 </script>
 
 {#if root}
     {#each root as par}
-    <!-- <XMLNode {render} ancestors={[]} node={par} on:change /> -->
-    <!-- <XMLRender node={par}/> -->
-    <XMLRender node={par}/>
+    <XMLRender node={par} on:updateNode={() => updateNodeInXML()} />
     {/each}
 {:else}
     <span>Invalid XML</span>

@@ -1,7 +1,10 @@
 <script lang="ts">
+    import { createEventDispatcher } from 'svelte';
     import EditWord from '$lib/components/blocks/menuWord.svelte';
     import { tags } from '$lib/store-settings.js';
     export let node: Element;
+
+    const dispatch = createEventDispatcher();
 
     type TagDefinition = {
         name: string;
@@ -10,15 +13,13 @@
         className: string;
         };
 
-    $: tagDefinitions = JSON.parse($tags) as TagDefinition[]; 
-
-    console.log($tags);
+    $: tagDefinitions = JSON.parse($tags) as TagDefinition[];
 
     function getTagName(node: Element): string {
         const normalizedNodeName = node.nodeName;
         const type = node.getAttribute('type') || null;
 
-        const tagDef = tagDefinitions.find(def => def.name === normalizedNodeName && (!def.type || def.type === type));
+        const tagDef = (type === null) ? tagDefinitions.find(def => def.name === normalizedNodeName) : tagDefinitions.find(def => def.name === normalizedNodeName && (def.type === type));
 
         return tagDef ? tagDef.htmlTag : 'span'; // Fallback to 'span' if tag not found
         }
@@ -27,7 +28,7 @@
         const normalizedNodeName = node.nodeName;
         const type = node.getAttribute('type') || null;
 
-        const tagDef = tagDefinitions.find(def => def.name === normalizedNodeName && (!def.type || def.type === type));
+        const tagDef = (type === null) ? tagDefinitions.find(def => def.name === normalizedNodeName) : tagDefinitions.find(def => def.name === normalizedNodeName && (def.type === type));
 
         return tagDef ? tagDef.className : ''; // Fallback to empty string if no class found
         }
@@ -68,6 +69,20 @@
             });
         }
     }
+    
+    function updateNodeContent(event: Event) {
+        const target = event.target as HTMLElement;
+        // Update the node with the new text content
+        node.textContent = target.textContent;
+        // Optionally dispatch an event or call a function to save changes to a backend
+        dispatch('updateNode', node);
+    }
+
+    function isTextOnly(node: Element): boolean {
+    // Check if all child nodes are text nodes, ignoring attributes
+    return Array.from(node.childNodes).every(child => child.nodeType === Node.TEXT_NODE);
+}
+
 </script>
 
 <!-- Render dynamic HTML elements -->
@@ -76,10 +91,12 @@
     this={getTagName(node)}
     class={getClass(node)}
     {...getDataAttributes(node)}
+    contentEditable={!((node.nodeName === 'w') || !isTextOnly(node))}
     on:mouseover={handleMouseOver}
     on:focus={handleMouseOver}
     on:mouseleave={handleMouseOut}
-    on:blur={handleMouseOut}>
+    on:blur={handleMouseOut}
+    on:input={updateNodeContent}>
     {#if node.nodeName.toLowerCase() === 'w'}
         <!-- Render the custom word component -->
         <EditWord attributes={getDataAttributes(node)} word={node.textContent} />
