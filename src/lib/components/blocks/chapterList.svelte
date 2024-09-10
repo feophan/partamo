@@ -52,13 +52,13 @@
     <h2 class="mb-2 px-2 text-lg font-semibold tracking-tight">Content</h2>
     <div class="space-y-1">
         {#if root && root.length > 0}
-            {#each [...root] as chap}
+            {#each [...root] as chap, i}
                 <Button on:click={() => chapSelect(getChapterNumber(chap))} variant="ghost" class="w-full px-2 justify-start justify-items-start">
-                    {@html chap.children[0].innerHTML}
+                    {@html chap.children[0] ? chap.children[0].innerHTML : `${i+1}`}
                 </Button>
             {/each}
         {:else}
-            <p>No chapters available</p>
+            <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
         {/if}
     </div>
 </div>

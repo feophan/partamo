@@ -1,5 +1,6 @@
 <script lang="ts">
     import { xml, fileUploaded, fileName } from '$lib/stores.js';
+    import Create from './createProject.svelte';
     import { buttonVariants } from "$lib/components/ui/button";
     import Upload from "svelte-radix/Upload.svelte";
 
@@ -56,16 +57,19 @@
         />
     </div>
 {:else}
-    <div>
-        <label for="project" class={buttonVariants({ variant: "outline" })}>Select Project</label>
-        <input
-            accept=".xml"
-            bind:files
-            id="project"
-            name="project"
-            type="file"
-            style="display:none"
-            bind:this={fileInput}
-        />
+    <div class="flex flex-row gap-4">
+        <Create />
+        <div>
+            <label for="project" class={buttonVariants({ variant: "outline" })}>Open Project</label>
+            <input
+                accept=".xml"
+                bind:files
+                id="project"
+                name="project"
+                type="file"
+                style="display:none"
+                bind:this={fileInput}
+            />
+        </div>
     </div>
 {/if}
