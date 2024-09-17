@@ -1,130 +1,60 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    import EditWord from '$lib/components/blocks/menuWord.svelte';
-    import { tags } from '$lib/store-settings.js';
-    export let node: Element;
+    import WordComponent from './tags/w.svelte';
+    import ParagraphComponent from './tags/p.svelte';
+    import ElseComponent from './tags/else.svelte';
 
-    const dispatch = createEventDispatcher();
+    import { tags } from '$lib/store-settings.js';
+
+    export let node: Element;
 
     type TagDefinition = {
         name: string;
-        type?: string; // Optional type (e.g., 'main' or 'sub' for 'head')
+        type?: string;
         htmlTag: string;
         className: string;
     };
 
     $: tagDefinitions = JSON.parse($tags) as TagDefinition[];
 
-    function getTagName(node: Element): string {
-        const normalizedNodeName = node.nodeName;
-        const type = node.getAttribute('type') || null;
+    const findTagDefinition = (nodeName: string, type: string | null) =>
+            type === null
+            ? tagDefinitions.find(def => def.name === nodeName)
+            : tagDefinitions.find(def => def.name === nodeName && def.type === type);
 
-        const tagDef = type === null
-            ? tagDefinitions.find(def => def.name === normalizedNodeName)
-            : tagDefinitions.find(def => def.name === normalizedNodeName && def.type === type);
+    const getTagName = (node: Element) =>
+    findTagDefinition(node.nodeName, node.getAttribute('type'))?.htmlTag || 'span';
 
-        return tagDef ? tagDef.htmlTag : 'span'; // Fallback to 'span' if tag not found
-    }
+    const getClass = (node: Element) =>
+    findTagDefinition(node.nodeName, node.getAttribute('type'))?.className || '';
 
-    function getClass(node: Element): string {
-        const normalizedNodeName = node.nodeName;
-        const type = node.getAttribute('type') || null;
+    const tagComponents = {
+        'w': WordComponent,
+        'p': ParagraphComponent
+    };
 
-        const tagDef = type === null
-            ? tagDefinitions.find(def => def.name === normalizedNodeName)
-            : tagDefinitions.find(def => def.name === normalizedNodeName && def.type === type);
+    const getComponentForTag = (nodeName: string) => {
+        return tagComponents[nodeName as keyof typeof tagComponents] || ElseComponent;
+    };
 
-        return tagDef ? tagDef.className : ''; // Fallback to empty string if no class found
-    }
+    const getDataAttributes = (node: Element) =>
+        Array.from(node.attributes).reduce((attrs, attr) => {
+            attrs[attr.name === "id" ? attr.name : `data-${attr.name}`] = attr.value;
+            return attrs;
+        }, {} as Record<string, string>);
 
-    function getDataAttributes(node: Element): Record<string, string> {
-        const dataAttributes: Record<string, string> = {};
+    const nodeName = getComponentForTag(node.nodeName.toLowerCase());
 
-        for (let i = 0; i < node.attributes.length; i++) {
-            const attr = node.attributes[i];
-            if (attr.name == "id") {
-                dataAttributes[attr.name] = attr.value;
-            } else {
-                dataAttributes['data-'.concat(attr.name)] = attr.value;
-            }
-        }
-
-        return dataAttributes;
-    }
-
-    function handleMouseOver(event: MouseEvent | FocusEvent) {
-        const target = event.target as HTMLElement;
-        if (target && target.getAttribute('data-ref')) {
-            let ref: Array<string> = JSON.parse(target.getAttribute('data-ref') as string);
-            ref.forEach((e: string) => {
-                const el = document.getElementById(e);
-                if (el) { el.classList.add("bg-orange-500", "text-zinc-100", "rounded", "px-1") }
-            });
-        }
-    }
-
-    function handleMouseOut(event: MouseEvent | FocusEvent) {
-        const target = event.target as HTMLElement;
-        if (target && target.getAttribute('data-ref')) {
-            let ref: Array<string> = JSON.parse(target.getAttribute('data-ref') as string);
-            ref.forEach((e: string) => {
-                const el = document.getElementById(e);
-                if (el) { el.classList.remove("bg-orange-500", "text-zinc-100", "rounded", "px-1") }
-            });
-        }
-    }
-
-    function updateNodeContent(event: Event) {
-        const target = event.target as HTMLElement;
-        // Update only if the content actually changed to avoid excessive re-renders
-        if (target.textContent !== node.textContent) {
-            // Update the node with the new text content
-            node.textContent = target.textContent;
-            dispatch('updateNode', node);
-        }
-    }
-
-    function handleFocus(event: FocusEvent) {
-        const target = event.target as HTMLElement;
-
-        // If the content is a non-breaking space, clear it so the user can start typing
-        if (target.innerHTML === "&nbsp;" || target.innerHTML === "") {
-            target.innerHTML = "";
-        }
-    }
-
-    function handleBlur(event: FocusEvent) {
-        const target = event.target as HTMLElement;
-
-        // If the content is empty after blur, set it back to a non-breaking space
-        if (target.textContent?.trim() === "") {
-            target.innerHTML = "&nbsp;";
-        }
-    }
-
-    function isTextOnly(node: Element): boolean {
-        return Array.from(node.childNodes).every(child => child.nodeName !== 'w');
-    }
 </script>
 
 <!-- Render dynamic HTML elements -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<svelte:element
-    this={getTagName(node)}
+
+<svelte:component
+    this={nodeName}
+    tag={getTagName(node)}
     class={getClass(node)}
-    {...getDataAttributes(node)}
-    contentEditable={isTextOnly(node)}
-    on:mouseover={handleMouseOver}
-    on:focus={handleMouseOver}
-    on:focus={handleFocus}
-    on:mouseleave={handleMouseOut}
-    on:blur={handleMouseOut}
-    on:blur={handleBlur}
-    on:input={updateNodeContent}>
-    
-    {#if node.nodeName.toLowerCase() === 'w'}
-        <EditWord attributes={getDataAttributes(node)} word={node.textContent} />
-    {:else}
+    {node}
+    attributes={getDataAttributes(node)}
+    on:updateNode>
         {#each Array.from(node.childNodes) as child}
             {#if child.nodeType === 3}
                 {child.textContent}
@@ -132,5 +62,5 @@
                 <svelte:self node={child} />
             {/if}
         {/each}
-    {/if}
-</svelte:element>
+</svelte:component>
+

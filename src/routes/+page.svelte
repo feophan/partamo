@@ -3,10 +3,15 @@
 	import Panel from '$lib/components/blocks/textPanel.svelte';
 	import Project from '$lib/components/blocks/sidebar/openProject.svelte';
 	import Create from "$lib/components/blocks/createPar.svelte";
-	import { xml } from '$lib/stores.js';
+	import { contextPosition, xml } from '$lib/stores.js';
+
+	function onBodyClick() {
+		$contextPosition = null;
+	}
 </script>
 
-<div class="hidden md:block overscroll-none">
+<svelte:body on:click={onBodyClick} on:contextmenu={onBodyClick} />
+<div class="hidden md:block overscroll-none h-screen">
 	{#if $xml !== null}
 	<Sidebar />
 	<div class="grid grid-cols-6 py-4 ml-40">

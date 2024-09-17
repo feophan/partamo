@@ -17,6 +17,8 @@
             <version major="0" minor="1" />
             <div type="${divType}" lang="${defLang}">
             </div>
+            <div type="${divType}" lang="qy">
+            </div>
         </body>
         `
         const parser = new DOMParser();
@@ -42,12 +44,12 @@
                 <Input id="name" bind:value={fileNameInput} class="col-span-3" autocomplete="off" />
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="username" class="text-right">Default language</Label>
-                <Input id="username" bind:value={defLang} class="col-span-3" autocomplete="off" />
+                <Label for="lang" class="text-right">Default language</Label>
+                <Input id="lang" bind:value={defLang} class="col-span-3" autocomplete="off" />
             </div>
             <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="username" class="text-right">Division type</Label>
-                <Input id="username" bind:value={divType} class="col-span-3" autocomplete="off" />
+                <Label for="div" class="text-right">Division type</Label>
+                <Input id="div" bind:value={divType} class="col-span-3" autocomplete="off" />
             </div>
         </div>
         <Dialog.Footer>

@@ -1,16 +1,9 @@
 <script lang="ts">
     import { xml } from '$lib/stores.js';
-
     import { Button } from "$lib/components/ui/button/index.js";
-    import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { Input } from "$lib/components/ui/input/index.js";
-    import { Label } from "$lib/components/ui/label/index.js";
-
     import PlusCircled from "svelte-radix/PlusCircled.svelte";
 
-    let chapterTitle = 'Chapter';
-    let chapterSubTitle = '';
-    let chapterNumber = '1';
+    const chapSub = true;
 
     $: book = $xml;
 
@@ -18,19 +11,21 @@
       if (book) {
           // Find the <version> element in the XML document
           const books = book.querySelectorAll("body > div");
+          const lastChap: string | null = books[0].lastElementChild!.getAttribute('n'); // add error processing if no book is present
           if (books) {
               books.forEach((e) => {
                 const newChap = book.createElement("div");
                 const newChapTitle = book.createElement("head");
                 newChap.setAttribute("type","chapter");
-                newChap.setAttribute("n",chapterNumber);
-                newChapTitle.textContent = chapterTitle;
-                if (chapterSubTitle) {
+                newChap.setAttribute("n", lastChap ? (parseInt(lastChap)+1).toString() : "1");
+                newChap.id = e.getAttribute('lang')!.concat(`-${newChap.getAttribute('n')}`); // add error processing if lang is not present
+                newChapTitle.textContent = `Chapter ${newChap.getAttribute('n')} title`;
+                if (chapSub) {
                     newChapTitle.setAttribute("type", "main");
                     newChap.appendChild(newChapTitle);
                     const newChapSubtitle = book.createElement("head");
                     newChapSubtitle.setAttribute("type", "sub");
-                    newChapSubtitle.textContent = chapterSubTitle;
+                    newChapSubtitle.textContent = 'Subtitle';
                     newChap.appendChild(newChapSubtitle);
                 } else {
                     newChap.appendChild(newChapTitle);
@@ -44,31 +39,6 @@
 
 </script>
     
-<Dialog.Root>
-    <Dialog.Trigger class="w-full px-2 flex justify-center"><Button variant="ghost" size="icon">
-        <PlusCircled class="w-4 h-4" />
-    </Button></Dialog.Trigger>
-    <Dialog.Content>
-        <Dialog.Header>
-            <Dialog.Title>Add chapter</Dialog.Title>
-            <Dialog.Description>Define the information about your document subdivision here. Click save when you're done.</Dialog.Description>
-        </Dialog.Header>
-        <div class="grid gap-4 py-4">
-            <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="title" class="text-right">Title</Label>
-                <Input id="title" bind:value={chapterTitle} class="col-span-3" autocomplete="off" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="subtitle" class="text-right">Subtitle</Label>
-                <Input id="subtitle" bind:value={chapterSubTitle} class="col-span-3" autocomplete="off" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="number" class="text-right">Number</Label>
-                <Input id="number" bind:value={chapterNumber} class="col-span-3" autocomplete="off" />
-            </div>
-        </div>
-        <Dialog.Footer>
-            <Button type="submit" on:click={addChapter}>Create chapter</Button>
-        </Dialog.Footer>
-    </Dialog.Content>
-</Dialog.Root>
+<Button variant="ghost" size="icon" on:click={addChapter}>
+    <PlusCircled class="w-4 h-4" />
+</Button>

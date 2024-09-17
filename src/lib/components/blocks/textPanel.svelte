@@ -1,13 +1,22 @@
 <script lang="ts">
     import { XML } from '$lib/index.js';
-    import { lang } from '$lib/stores.js';
+    import { lang, contextPosition } from '$lib/stores.js';
 
     $: lg = $lang.length;
+
+    import Context from '$lib/components/blocks/context/contextParagraph.svelte';
+
+    function onRightClick(e) {
+        e.stopPropagation();
+        $contextPosition = [e.clientX, e.clientY, e.target];
+    }
 
 </script>
 
 {#if lg > 0}
-<div class="grid {lg === 1 ? "grid-cols-1" : "grid-cols-2 gap-x-10"} col-span-6 gap-y-2 px-10">
+<Context />
+<div on:contextmenu|preventDefault={onRightClick}
+    class="grid {lg === 1 ? "grid-cols-1" : "grid-cols-2 gap-x-10"} col-span-6 gap-y-2 px-10">
     <XML />
 </div>
 {:else}
