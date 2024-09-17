@@ -1,12 +1,15 @@
 <script lang="ts">
     import Item from "./contextItem.svelte";
-    import { contextPosition, xml } from '$lib/stores.js';
+    import { contextPosition, xml, linkFlag } from '$lib/stores.js';
 
     import Pencil from "svelte-radix/Pencil1.svelte";
     import Code from "svelte-radix/Code.svelte";
-    import Trash from "svelte-radix/Trash.svelte";
+    import Link from "svelte-radix/Link2.svelte";
+    import LinkBreak from "svelte-radix/LinkBreak2.svelte";
 
     $: book = $xml;
+
+    let selectedWordId: string | null = null; // for linking
 
     function wrapParagraph() {
         if ($contextPosition !== null) {
@@ -50,12 +53,29 @@
         };
     };
 
+    function linkWords() {
+        if ($contextPosition !== null) {
+            $linkFlag[0] = true;
+            $linkFlag[1]= $contextPosition[2].id;
+        }
+    };
+
+    function selectWord(e: Event) {
+        const target = e.target as HTMLElement;
+        const id = target.getAttribute('id');
+        if (id) {
+            selectedWordId = id;
+            console.log("Selected word ID:", selectedWordId);
+        }
+    }
+
 </script>
 
 {#if $contextPosition !== null}
 <div class="fixed z-10 top-32 left-32 bg-white rounded border border-gray-300" style="top: {$contextPosition[1]}px; left: {$contextPosition[0]}px">
-    <Item><Pencil class="h-4 w-4"/>Edit</Item>
-    <Item on:click={wrapParagraph}><Code class="h-4 w-4"/>Wrap</Item>
-    <Item><Trash class="h-4 w-4"/>Delete</Item>
+    <Item disabled={true}><Pencil class="h-4 w-4"/>Edit</Item>
+    <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== 'P'}><Code class="h-4 w-4"/>Wrap</Item>
+    <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== 'SPAN'}><Link class="h-4 w-4"/>Link</Item>
+    <Item disabled={true}><LinkBreak class="h-4 w-4"/>Unlink</Item>
 </div>
 {/if}

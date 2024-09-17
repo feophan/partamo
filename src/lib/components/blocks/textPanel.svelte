@@ -6,12 +6,15 @@
 
     import Context from '$lib/components/blocks/context/contextParagraph.svelte';
 
-    function onRightClick(e) {
+    function onRightClick(e: MouseEvent) {
+        console.log(e);
         e.stopPropagation();
-        $contextPosition = [e.clientX, e.clientY, e.target];
+        $contextPosition = [e.clientX, e.clientY, e.target as Element];
     }
 
 </script>
+
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 
 {#if lg > 0}
 <Context />

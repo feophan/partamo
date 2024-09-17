@@ -11,3 +11,4 @@ export const fileName = writable<string>('document');
 
 // Context
 export const contextPosition = writable<null | [number, number, Element]>(null);
+export const linkFlag = writable<[boolean, string | null]>([false, null]);

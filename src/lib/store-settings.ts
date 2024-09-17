@@ -25,7 +25,7 @@ const defaultTags = [
     { name: 'head', type: 'main', htmlTag: 'h1', className: 'text-blue-500 font-bold' },
     { name: 'p', htmlTag: 'p', className: 'before:content-[attr(data-n)] -indent-4 before:pr-2 before:text-slate-300' },
     { name: 'emph', htmlTag: 'span', className: 'italic' },
-    { name: 'w', htmlTag: 'span', className: 'hover:bg-sky-500 hover:text-zinc-100 hover:rounded hover:px-1' }
+    { name: 'w', htmlTag: 'span', className: 'hover:bg-sky-500 hover:text-zinc-100 hover:rounded hover:outline hover:outline-2 hover:outline-sky-500' }
     ];
 
 /// Get the value out of storage on load.
