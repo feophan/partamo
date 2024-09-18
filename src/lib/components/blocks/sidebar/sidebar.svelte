@@ -5,16 +5,18 @@
     import ChapterList from './chapterList.svelte';
     import LangBar from './langBar.svelte';
     import Version from './versionControl.svelte';
+    import Glossary from './glossaryOpen.svelte';
 </script>
 
 <div class="h-screen pb-12 pt-24 lg:block fixed w-40 bg-primary">
-    <Version />   
+    <Version />
     <div class="text-primary-foreground px-4 flex flex-col gap-4 justify-start justify-items-start">
        <ChapterList />
     </div>
-    <div class="fixed bottom-0 flex flex-row justify-around w-max">
+    <div class="fixed bottom-0 flex flex-col justify-end">
         <OpenProject />
         <LangBar />
+        <Glossary />
         <SaveProject />
         <SettingProject />
     </div>

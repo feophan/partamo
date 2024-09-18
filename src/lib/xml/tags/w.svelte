@@ -23,6 +23,7 @@
         const target = e.target as HTMLElement;
 
         if ($linkFlag[0] && $linkFlag[1]) {
+
             const refWordId = target.id;
             const linkWordId = $linkFlag[1];
             
