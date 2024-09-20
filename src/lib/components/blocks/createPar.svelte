@@ -3,6 +3,8 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import PlusCircled from "svelte-radix/PlusCircled.svelte";
 
+    import * as Tooltip from "$lib/components/ui/tooltip";
+
     $: book = $xml;
 
     function addPar() {
@@ -24,7 +26,12 @@
 </script>
     
 <div class="col-start-3 col-end-5 flex justify-center mt-4">
-    <Button variant="ghost" size="icon" on:click={addPar}>
-        <PlusCircled class="w-4 h-4" />
-    </Button>
+  <Tooltip.Root>
+    <Tooltip.Trigger><Button variant="ghost" size="icon" on:click={addPar}>
+      <PlusCircled class="w-4 h-4" />
+  </Button></Tooltip.Trigger>
+    <Tooltip.Content>
+      <p>Add paragraph</p>
+    </Tooltip.Content>
+  </Tooltip.Root>
 </div>

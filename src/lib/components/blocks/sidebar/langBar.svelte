@@ -5,6 +5,7 @@
     import Letter from "svelte-radix/LetterCaseCapitalize.svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
+    import * as Tooltip from "$lib/components/ui/tooltip";
 
     interface Selection {
         value: string;
@@ -26,15 +27,13 @@
     const updateLangList = () => {
         if (!book) return;
         const availableLangs = parse(book);
-        // Cast the result of JSON.parse to an array of Selection
-        const parsedLangs = JSON.parse($langs) as Selection[]; 
-        lang_list = Array.from(parsedLangs).filter(lang => availableLangs.includes(lang.value));
+        
+        // Get the current languages from the store
+        const parsedLangs: Selection[] = $langs; 
+        lang_list = parsedLangs.filter(lang => availableLangs.includes(lang.value));
 
         // Keep only valid selected languages
         selectedLangs = selectedLangs.filter(selectedLang => availableLangs.includes(selectedLang.value));
-
-        // Update the store with the selected languages
-        lang.set(selectedLangs.map(s => s.value));
 
         // Update the checked state for each language
         checkedState = lang_list.reduce((acc, lang) => {
@@ -45,12 +44,19 @@
 
     // Subscribe to xml store and initialize lang_list on mount
     onMount(() => {
-        const unsubscribe = xml.subscribe(value => {
+        const unsubscribeXml = xml.subscribe(value => {
             book = value;
             updateLangList();
         });
 
-        return unsubscribe; // Unsubscribe when component is destroyed
+        const unsubscribeLangs = langs.subscribe(() => {
+            updateLangList(); // Update the list whenever langs changes
+        });
+
+        return () => {
+            unsubscribeXml();
+            unsubscribeLangs(); // Clean up subscriptions
+        };
     });
 
     // Handle selection change
@@ -77,7 +83,12 @@
 
 <DropdownMenu.Root closeOnItemClick={false}>
     <DropdownMenu.Trigger asChild let:builder>
-        <Button variant="ghost" size="icon" builders={[builder]} class="text-primary-foreground hover:text-secondary-foreground"><Letter class="w-4 h-4"/></Button>
+        <Tooltip.Root>
+            <Tooltip.Trigger><Button variant="ghost" size="icon" builders={[builder]} class="text-primary-foreground hover:text-secondary-foreground"><Letter class="w-4 h-4"/></Button></Tooltip.Trigger>
+            <Tooltip.Content>
+              <p>Select languages</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content class="w-56">
         {#each items as lang}

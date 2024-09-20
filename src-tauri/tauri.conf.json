@@ -12,7 +12,16 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "fs": {
+      "createDir": true,
+      "readDir": true,
+      "readFile": true,
+      "writeFile": true,
+      "scope": ["$APPCONFIG", "$APPCONFIG/*"]
+    },
+      "path": {
+        "all": true
+      }
     },
     "bundle": {
       "active": true,
@@ -29,7 +38,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.partamo.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

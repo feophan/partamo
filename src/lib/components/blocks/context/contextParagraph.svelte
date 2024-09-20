@@ -7,9 +7,12 @@
     import Link from "svelte-radix/Link2.svelte";
     import LinkBreak from "svelte-radix/LinkBreak2.svelte";
 
+    import Dialog from '../editorPanel.svelte'; // Import the dialog component
+    import XMLEditor from '$lib/xml/XMLEditor.svelte'; // Import your XMLEditor component
+
     $: book = $xml;
 
-    let selectedWordId: string | null = null; // for linking
+    // Wrapping
 
     function wrapParagraph() {
         if ($contextPosition !== null) {
@@ -53,6 +56,8 @@
         };
     };
 
+    // Linking
+
     function linkWords() {
         if ($contextPosition !== null) {
             $linkFlag[0] = true;
@@ -60,12 +65,28 @@
         }
     };
 
-    function selectWord(e: Event) {
-        const target = e.target as HTMLElement;
-        const id = target.getAttribute('id');
-        if (id) {
-            selectedWordId = id;
-            console.log("Selected word ID:", selectedWordId);
+    // Editor
+
+    let dialogOpen = false;
+    let paragraphContent = ''; // Holds the paragraph content for editing
+    let paragraphId = ''; // Store the ID of the current paragraph
+
+    function openEditor() {
+    if ($contextPosition && book) { // Check if $contextPosition is not null
+        paragraphId = $contextPosition[2].id; // Get the paragraph ID
+        const paragraph = book.querySelector(`#${paragraphId}`); // Find paragraph in the XML document
+        paragraphContent = paragraph ? paragraph.innerHTML : ''; // Extract content to be edited
+
+        dialogOpen = true; // Open the dialog
+    }
+}
+
+    function handleInput(event: CustomEvent<string>) {
+        paragraphContent = event.detail; // Update paragraphContent with the latest value from the editor
+        const paragraph = book!.querySelector(`#${paragraphId}`);
+        if (paragraph) {
+            paragraph.innerHTML = paragraphContent; // Update the XML content with new paragraph content
+            xml.set(book);
         }
     }
 
@@ -73,9 +94,14 @@
 
 {#if $contextPosition !== null}
 <div class="fixed z-10 top-32 left-32 bg-white rounded border border-gray-300" style="top: {$contextPosition[1]}px; left: {$contextPosition[0]}px">
-    <Item disabled={true}><Pencil class="h-4 w-4"/>Edit</Item>
+    <Item on:click={openEditor} disabled={$contextPosition[2].nodeName !== 'P'}><Pencil class="h-4 w-4"/>Edit</Item>
     <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== 'P'}><Code class="h-4 w-4"/>Wrap</Item>
     <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== 'SPAN'}><Link class="h-4 w-4"/>Link</Item>
     <Item disabled={true}><LinkBreak class="h-4 w-4"/>Unlink</Item>
 </div>
 {/if}
+
+<!-- Dialog for editing -->
+<Dialog bind:dialogOpen={dialogOpen}>
+    <XMLEditor bind:content={paragraphContent} on:input={handleInput} />
+</Dialog>

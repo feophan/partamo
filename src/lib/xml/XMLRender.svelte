@@ -7,14 +7,7 @@
 
     export let node: Element;
 
-    type TagDefinition = {
-        name: string;
-        type?: string;
-        htmlTag: string;
-        className: string;
-    };
-
-    $: tagDefinitions = JSON.parse($tags) as TagDefinition[];
+    $: tagDefinitions = $tags;
 
     const findTagDefinition = (nodeName: string, type: string | null) =>
             type === null

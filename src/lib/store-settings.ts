@@ -1,38 +1,76 @@
 import { writable } from 'svelte/store';
+import { SettingsManager } from 'tauri-settings';
 
-// Languages
+export type Lang = {
+  value: string;
+  label: string;
+};
 
-const defaultLangs = [
-    { value: "en", label: "English" },
-    { value: "it", label: "Italian" },
-    { value: "qy", label: "Quenya" }
+type Tag = {
+  name: string;
+  type?: string;
+  htmlTag: string;
+  className: string;
+};
+
+type Schema = {
+  langs: Lang[];
+  tags: Tag[];
+};
+
+const defaultLangs: Lang[] = [
+  { value: "en", label: "English" },
+  { value: "it", label: "Italian" },
+  { value: "qy", label: "Quenya" }
 ];
 
-/// Get the value out of storage on load.
-const storedLangs = localStorage.langs ? JSON.parse(localStorage.langs) : null;
+const defaultTags: Tag[] = [
+  { name: 'head', htmlTag: 'h1', className: 'text-blue-500 font-bold' },
+  { name: 'head', type: 'sub', htmlTag: 'h2', className: 'text-sky-500 italic' },
+  { name: 'head', type: 'main', htmlTag: 'h1', className: 'text-blue-500 font-bold' },
+  { name: 'p', htmlTag: 'p', className: 'before:content-[attr(data-n)] -indent-4 before:pr-2 before:text-slate-300' },
+  { name: 'emph', htmlTag: 'span', className: 'italic' },
+  { name: 'w', htmlTag: 'span', className: 'hover:bg-sky-500 hover:text-zinc-100 hover:rounded hover:outline hover:outline-2 hover:outline-sky-500' }
+];
 
-/// Set the stored value or a sane default.
-export const langs = writable(storedLangs || JSON.stringify(defaultLangs));
+// Initialize the settings manager
+const settingsManager = new SettingsManager<Schema>(
+  { // defaults
+    langs: defaultLangs,
+    tags: defaultTags,
+  },
+  { // options
+    fileName: 'user-settings'
+  }
+);
 
-/// Anytime the store changes, update the local storage value.
-langs.subscribe((value) => localStorage.langs = JSON.stringify(value));
+// Function to load settings
+async function loadSettings() {
+  await settingsManager.initialize();
 
-// XML tags
+  const langs = settingsManager.getCache('langs');
+  const tags = settingsManager.getCache('tags');
+  
+  return { langs, tags };
+}
 
-const defaultTags = [
-    { name: 'head', htmlTag: 'h1', className: 'text-blue-500 font-bold' },
-    { name: 'head', type: 'sub', htmlTag: 'h2', className: 'text-sky-500 italic' },
-    { name: 'head', type: 'main', htmlTag: 'h1', className: 'text-blue-500 font-bold' },
-    { name: 'p', htmlTag: 'p', className: 'before:content-[attr(data-n)] -indent-4 before:pr-2 before:text-slate-300' },
-    { name: 'emph', htmlTag: 'span', className: 'italic' },
-    { name: 'w', htmlTag: 'span', className: 'hover:bg-sky-500 hover:text-zinc-100 hover:rounded hover:outline hover:outline-2 hover:outline-sky-500' }
-    ];
+// Function to save settings
+async function saveSettings(key: keyof Schema, value: Lang[] | Tag[]) {
+  settingsManager.setCache(key, value);
+  await settingsManager.syncCache(); // Ensure changes are written to the settings file
+}
 
-/// Get the value out of storage on load.
-const storedTags = localStorage.tags ? JSON.parse(localStorage.tags) : null;
+// Load settings on initialization and set up Svelte stores
+const { langs: storedLangs, tags: storedTags } = await loadSettings();
 
-/// Set the stored value or a sane default.
-export const tags = writable(storedTags || JSON.stringify(defaultTags));
+export const langs = writable<Lang[]>(storedLangs || defaultLangs);
+export const tags = writable<Tag[]>(storedTags || defaultTags);
 
-/// Anytime the store changes, update the local storage value.
-tags.subscribe((value) => localStorage.tags = JSON.stringify(value));
+// Subscribe to store changes and save settings
+langs.subscribe(async (value) => {
+  await saveSettings('langs', value);
+});
+
+tags.subscribe(async (value) => {
+  await saveSettings('tags', value);
+});

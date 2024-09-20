@@ -4,6 +4,8 @@
     import { buttonVariants } from "$lib/components/ui/button";
     import Upload from "svelte-radix/Upload.svelte";
 
+    import * as Tooltip from "$lib/components/ui/tooltip";
+
     let files: FileList;
     let fileInput: HTMLInputElement;
 
@@ -42,7 +44,8 @@
 </script>
 
 {#if $fileUploaded }
-    <div>
+<Tooltip.Root>
+    <Tooltip.Trigger>
         <label for="project" class={`${buttonVariants({ variant: "ghost", size: "icon" })} text-primary-foreground hover:text-secondary-foreground`}>
             <Upload class="w-4 h-4"/>
         </label>
@@ -55,7 +58,11 @@
             style="display:none"
             bind:this={fileInput} 
         />
-    </div>
+    </Tooltip.Trigger>
+    <Tooltip.Content>
+      <p>Open project</p>
+    </Tooltip.Content>
+  </Tooltip.Root>
 {:else}
     <div class="flex flex-row gap-4">
         <Create />

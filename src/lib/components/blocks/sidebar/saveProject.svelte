@@ -2,6 +2,7 @@
   import { xml, fileName } from '$lib/stores.js';
   import { Button } from "$lib/components/ui/button/index.js";
   import Download from "svelte-radix/Download.svelte";
+  import * as Tooltip from "$lib/components/ui/tooltip";
   
   // Sample document content
   $: book = $xml;
@@ -66,7 +67,13 @@
   }
 </script>
 
-<!-- Button to trigger the download -->
-<Button on:click={downloadDocument} variant="ghost" size="icon" class="text-primary-foreground hover:text-secondary-foreground">
-  <Download class="w-4 h-4"/>
-</Button>
+<!-- Button to trigger the download -->  
+<Tooltip.Root>
+    <Tooltip.Trigger><Button on:click={downloadDocument} variant="ghost" size="icon" class="text-primary-foreground hover:text-secondary-foreground">
+        <Download class="w-4 h-4"/>
+      </Button></Tooltip.Trigger>
+    <Tooltip.Content>
+        <p>Save project</p>
+    </Tooltip.Content>
+</Tooltip.Root>
+

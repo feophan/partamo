@@ -2,6 +2,7 @@
     import { xml, chapter } from '$lib/stores.js';
     import { Button } from "$lib/components/ui/button";
     import Create from './createChapter.svelte';
+    import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
     let book: Document | null;
 
@@ -49,18 +50,18 @@
     }
 </script>
 
-<div class="py-2">
+<div class="py-2 flex flex-col items-start">
     <h2 class="mb-2 px-2 text-lg font-semibold tracking-tight">Content</h2>
-    <div class="space-y-1">
-        {#if root && root.length > 0}
-            {#each [...root] as chap, i}
-                <Button on:click={() => chapSelect(getChapterNumber(chap))} variant="ghost" class="w-full px-2 justify-start justify-items-start">
-                    {@html chap.children[0] ? chap.children[0].innerHTML : `${i+1}`}
-                </Button>
-            {/each}
-        {:else}
-            <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
-        {/if}
-        <Create />
-    </div>
+        <div class="space-y-1 overflow-auto max-h-[60vh] scrollbar hover:scrollbar-thumb-secondary/40 active:scrollbar-thumb-secondary/60 scrollbar-thumb-secondary/20 scrollbar-thumb-rounded-full scrollbar-w-2">
+            {#if root && root.length > 0}
+                {#each [...root] as chap, i}
+                    <Button on:click={() => chapSelect(getChapterNumber(chap))} variant="ghost" class="w-full px-2 justify-start justify-items-start">
+                        {@html chap.children[0] ? chap.children[0].innerHTML : `${i+1}`}
+                    </Button>
+                {/each}
+            {:else}
+                <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
+            {/if}
+        </div>
+    <Create />
 </div>

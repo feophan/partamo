@@ -3,7 +3,6 @@
     import { xml, chapter, lang } from '$lib/stores.js';
     
     // Props
-    // export let render: Record<string, () => Promise<{ default: Render }>> = {};
 
     // Auto-subscribe to stores using the `$` prefix
     $: book = $xml;

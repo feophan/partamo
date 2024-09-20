@@ -5,6 +5,9 @@ const config = {
 	darkMode: ["class"],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
 	safelist: ["dark"],
+	plugins: [
+        require('tailwind-scrollbar')({ nocompatible: true }),
+    ],
 	theme: {
 		container: {
 			center: true,

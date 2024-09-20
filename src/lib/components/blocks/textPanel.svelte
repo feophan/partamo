@@ -20,22 +20,22 @@
     $: if ($linkFlag[0] === true) {
         // Use tick to wait for DOM updates before querying elements
         tick().then(() => {
-            changeHoverColor('sky', 'emerald');
+            changeHoverColor('sky');
         });
     } else {
         tick().then(() => {
-            changeHoverColor('emerald', 'sky');
+            changeHoverColor('emerald');
         });
     }
 
     // Function to switch hover colors dynamically
-    function changeHoverColor(from: string, to: string) {
+    function changeHoverColor(from: string) {
         const els = document.querySelectorAll(`.hover\\:bg-${from}-500`);
         const classes = ['hover:bg-sky-500', 'hover:bg-emerald-500', 'hover:outline-sky-500', 'hover:outline-emerald-500'];
         const indexClass = from === 'sky' ? 0 : 1;
         els.forEach(el => {
             el.classList.remove(classes[0 + indexClass]);
-            el.classList.remove(classes[3 + indexClass]);
+            el.classList.remove(classes[2 + indexClass]);
             el.classList.add(classes[1 - indexClass]);
             el.classList.add(classes[3 - indexClass]);
         });

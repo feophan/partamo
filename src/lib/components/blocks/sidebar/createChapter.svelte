@@ -3,6 +3,8 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import PlusCircled from "svelte-radix/PlusCircled.svelte";
 
+    import * as Tooltip from "$lib/components/ui/tooltip";
+
     const chapSub = true;
 
     $: book = $xml;
@@ -38,7 +40,13 @@
   }
 
 </script>
+
+<Tooltip.Root>
+    <Tooltip.Trigger><Button variant="ghost" size="icon" on:click={addChapter}>
+        <PlusCircled class="w-4 h-4" />
+    </Button></Tooltip.Trigger>
+    <Tooltip.Content>
+      <p>Add chapter</p>
+    </Tooltip.Content>
+  </Tooltip.Root>
     
-<Button variant="ghost" size="icon" on:click={addChapter}>
-    <PlusCircled class="w-4 h-4" />
-</Button>
