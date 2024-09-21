@@ -106,6 +106,33 @@
         }
     }
 
+    // Unlinking
+
+    function unlinkWord() {
+        if ($contextPosition && book) {
+            const wordId = $contextPosition[2].id; // Get the ID of the clicked word
+            const wordElement = book.getElementById(wordId);
+            if (wordElement) {
+            // Clear the ref attribute of the clicked word
+            wordElement.setAttribute('ref', '[]');
+
+            // Remove this word ID from all other words' ref attributes
+            const allWords = book.querySelectorAll('[ref]');
+            allWords.forEach((el) => {
+                const ref = el.getAttribute('ref');
+                if (ref) {
+                    const refs = JSON.parse(ref);
+                    const updatedRefs = refs.filter((id: string) => id !== wordId);
+                    el.setAttribute('ref', JSON.stringify(updatedRefs));
+                }
+            });
+
+            // Update the store to trigger reactivity
+            xml.set(book);
+            }
+        }
+    }
+
 </script>
 
 {#if $contextPosition !== null}
@@ -113,7 +140,7 @@
     <Item on:click={openEditor} disabled={$contextPosition[2].nodeName !== 'P'}><Pencil class="h-4 w-4"/>Edit</Item>
     <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== 'P'}><Code class="h-4 w-4"/>Wrap</Item>
     <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== 'SPAN'}><Link class="h-4 w-4"/>Link</Item>
-    <Item disabled={true}><LinkBreak class="h-4 w-4"/>Unlink</Item>
+    <Item on:click={unlinkWord} disabled={$contextPosition[2].nodeName !== 'SPAN'}><LinkBreak class="h-4 w-4"/>Unlink</Item>
 </div>
 {/if}
 

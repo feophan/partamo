@@ -1,5 +1,6 @@
 <script lang="ts">
     import { xml, fileUploaded, fileName } from '$lib/stores.js';
+    import { tocLang } from '$lib/store-settings.js';
     import { buttonVariants } from "$lib/components/ui/button";
 
     import { Button } from "$lib/components/ui/button/index.js";
@@ -9,7 +10,7 @@
 
     let fileNameInput = 'document';
     let divType = 'book';
-    let defLang = 'en';
+    $: defLang = $tocLang;
 
     function createProject() {
         const xmlSkeleton = `
