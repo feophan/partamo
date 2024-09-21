@@ -1,8 +1,8 @@
 <script lang="ts">
     import { xml, chapter } from '$lib/stores.js';
+    import { tocLang } from '$lib/store-settings.js';
     import { Button } from "$lib/components/ui/button";
     import Create from './createChapter.svelte';
-    import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
 
     let book: Document | null;
 
@@ -11,6 +11,10 @@
         book = value;
         updateRoot();  // Ensure root is updated when book changes
     });
+
+    $: tocLang.subscribe(() => {
+        updateRoot();
+    })
 
     let root: NodeListOf<Element> | null;
 
@@ -21,7 +25,7 @@
             return null;
         }
         else {
-            let book_lg = book.querySelector(`[lang="en"]`);
+            let book_lg = book.querySelector(`[lang="${$tocLang}"]`);
             if (book_lg) {
                 return book_lg.querySelectorAll('[type="chapter"]');
             } else {

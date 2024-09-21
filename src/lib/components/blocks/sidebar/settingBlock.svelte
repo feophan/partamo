@@ -9,7 +9,7 @@
     import * as Tooltip from "$lib/components/ui/tooltip";
 
     import Icon from "svelte-radix/Gear.svelte";
-    import { langs, tags } from '$lib/store-settings.js';
+    import { langs, tags, tocLang } from '$lib/store-settings.js';
 
     function addLanguage() {
     // Create a new array to trigger reactivity
@@ -80,6 +80,7 @@ function removeLang(index: number) {
                 <Tabs.List>
                     <Tabs.Trigger value="languages">Languages</Tabs.Trigger>
                     <Tabs.Trigger value="components">Components</Tabs.Trigger>
+                    <Tabs.Trigger value="toc">TOC</Tabs.Trigger>
                 </Tabs.List>
 
                 <!-- Language Tab -->
@@ -108,6 +109,15 @@ function removeLang(index: number) {
                         </div>
                         {/each}
                         <Button on:click={addTag}>Add Tag</Button>
+                    </div>
+                </Tabs.Content>
+
+                <!-- Components (TOC) Tab -->
+                <Tabs.Content value="toc">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <Input type="text" placeholder="TOC language" bind:value={$tocLang} />
+                        </div>
                     </div>
                 </Tabs.Content>
             </Tabs.Root>

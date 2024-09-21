@@ -16,6 +16,7 @@ type Tag = {
 type Schema = {
   langs: Lang[];
   tags: Tag[];
+  tocLang: string;
 };
 
 const defaultLangs: Lang[] = [
@@ -38,6 +39,7 @@ const settingsManager = new SettingsManager<Schema>(
   { // defaults
     langs: defaultLangs,
     tags: defaultTags,
+    tocLang: 'en'
   },
   { // options
     fileName: 'user-settings'
@@ -50,21 +52,23 @@ async function loadSettings() {
 
   const langs = settingsManager.getCache('langs');
   const tags = settingsManager.getCache('tags');
+  const tocLang = settingsManager.getCache('tocLang');
   
-  return { langs, tags };
+  return { langs, tags, tocLang };
 }
 
 // Function to save settings
-async function saveSettings(key: keyof Schema, value: Lang[] | Tag[]) {
+async function saveSettings(key: keyof Schema, value: Lang[] | Tag[] | string) {
   settingsManager.setCache(key, value);
   await settingsManager.syncCache(); // Ensure changes are written to the settings file
 }
 
 // Load settings on initialization and set up Svelte stores
-const { langs: storedLangs, tags: storedTags } = await loadSettings();
+const { langs: storedLangs, tags: storedTags, tocLang: storedTocLang } = await loadSettings();
 
 export const langs = writable<Lang[]>(storedLangs || defaultLangs);
 export const tags = writable<Tag[]>(storedTags || defaultTags);
+export const tocLang = writable<string>(storedTocLang || 'en');
 
 // Subscribe to store changes and save settings
 langs.subscribe(async (value) => {
@@ -74,3 +78,7 @@ langs.subscribe(async (value) => {
 tags.subscribe(async (value) => {
   await saveSettings('tags', value);
 });
+
+tocLang.subscribe(async (value) => {
+  await saveSettings('tocLang', value);
+})
