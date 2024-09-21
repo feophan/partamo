@@ -67,6 +67,8 @@
                     refs: uniqueInstances // Keep refs as an array
                 });
             }
+            // Sort the glossary by wordA alphabetically
+            glossary.sort((a, b) => a.wordA.localeCompare(b.wordA));
         }
     } else {
         toast.error("Select 2 languages");

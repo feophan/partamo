@@ -84,21 +84,26 @@
 <DropdownMenu.Root closeOnItemClick={false}>
     <DropdownMenu.Trigger asChild let:builder>
         <Tooltip.Root>
-            <Tooltip.Trigger><Button variant="ghost" size="icon" builders={[builder]} class="text-primary-foreground hover:text-secondary-foreground"><Letter class="w-4 h-4"/></Button></Tooltip.Trigger>
+            <Tooltip.Trigger>
+                <Button variant="ghost" size="icon" builders={[builder]} class="text-primary-foreground hover:text-secondary-foreground">
+                    <Letter class="w-4 h-4" />
+                </Button>
+            </Tooltip.Trigger>
             <Tooltip.Content>
-              <p>Select languages</p>
+                <p>Select languages</p>
             </Tooltip.Content>
-          </Tooltip.Root>
+        </Tooltip.Root>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content class="w-56">
-        {#each items as lang}
+        {#each lang_list as lang} <!-- Use lang_list instead of items -->
             <DropdownMenu.CheckboxItem
                 checked={checkedState[lang.value]}
                 on:click={() => handleSelectionChange(lang)}
-                disabled={!checkedState[lang.value] && selectedLangs.length >= 2}
+                disabled={selectedLangs.length >= 2 && !checkedState[lang.value]}
             >
                 {lang.label}
             </DropdownMenu.CheckboxItem>
         {/each}
     </DropdownMenu.Content>
 </DropdownMenu.Root>
+
