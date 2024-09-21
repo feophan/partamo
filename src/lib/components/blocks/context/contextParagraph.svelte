@@ -2,6 +2,8 @@
     import Item from "./contextItem.svelte";
     import { contextPosition, xml, linkFlag } from '$lib/stores.js';
 
+    import { onMount, onDestroy } from "svelte";
+
     import Pencil from "svelte-radix/Pencil1.svelte";
     import Code from "svelte-radix/Code.svelte";
     import Link from "svelte-radix/Link2.svelte";
@@ -64,6 +66,20 @@
             $linkFlag[1]= $contextPosition[2].id;
         }
     };
+
+    function handleKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            $linkFlag[0] = false; // Reset the link flag
+        }
+    }
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
 
     // Editor
 
