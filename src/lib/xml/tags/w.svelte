@@ -48,7 +48,9 @@
                 
                 // Update the store to trigger reactivity
                 xml.set($xml);
-                $linkFlag[0] = false; // Reset the flag
+                if (!e.ctrlKey) {
+                    $linkFlag[0] = false; // Reset the flag if CTRL is not pressed
+                }
             }
         }
     }
