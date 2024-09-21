@@ -13,7 +13,7 @@
       if (book) {
           // Find the <version> element in the XML document
           const books = book.querySelectorAll("body > div");
-          const lastChap: string | null = books[0].lastElementChild!.getAttribute('n'); // add error processing if no book is present
+          const lastChap: string | null = books[0].lastElementChild ? books[0].lastElementChild.getAttribute('n') : "0"; // add error processing if no book is present
           if (books) {
               books.forEach((e) => {
                 const newChap = book.createElement("div");
