@@ -16,20 +16,47 @@
         }
     };
 
-    function handlePaste(event: ClipboardEvent) {
-        event.preventDefault();
-        
-        // Get the clipboard data as plain text
-        const clipboardText = event.clipboardData?.getData('text') || '';
+    const handlePaste = (event: ClipboardEvent) => {
+    event.preventDefault();
 
-        // Get the target of the paste event (the contenteditable element)
-        const target = event.target as HTMLElement;
+    const clipboardData = event.clipboardData;
+    const pastedData = clipboardData?.getData('text/plain') || '';
 
-        // Clear the current content and insert the plain text
-        if (target) {
-            target.textContent = clipboardText; // Replace the entire content with the pasted text
-        }
+    // Get the current text content in the editable area
+    const target = event.target as HTMLElement;
+    const currentContent = target.textContent || '';
+
+    // Get the current selection (caret position) in the contenteditable area
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+
+    if (range) {
+        // Get the text before and after the caret (cursor position)
+        const startText = currentContent.substring(0, range.startOffset);
+        const endText = currentContent.substring(range.endOffset);
+
+        // Combine the content before, pasted text, and the content after
+        const newContent = startText + pastedData + endText;
+
+        // Update the content without modifying the existing DOM directly
+        target.textContent = newContent;
+
+        // Move the caret to the end of the pasted content
+        const newRange = document.createRange();
+        const newSelection = window.getSelection();
+        newRange.setStart(target.firstChild!, startText.length + pastedData.length);
+        newRange.collapse(true);
+
+        newSelection?.removeAllRanges();
+        newSelection?.addRange(newRange);
+
+        // Dispatch the event to update the node's content
+        node.textContent = newContent;
+        dispatch('updateNode', node);
     }
+};
+
+
 
     let className;
     export { className as class };
