@@ -16,6 +16,21 @@
         }
     };
 
+    function handlePaste(event: ClipboardEvent) {
+        event.preventDefault();
+        
+        // Get the clipboard data as plain text
+        const clipboardText = event.clipboardData?.getData('text') || '';
+
+        // Get the target of the paste event (the contenteditable element)
+        const target = event.target as HTMLElement;
+
+        // Clear the current content and insert the plain text
+        if (target) {
+            target.textContent = clipboardText; // Replace the entire content with the pasted text
+        }
+    }
+
     let className;
     export { className as class };
 </script>
@@ -27,7 +42,8 @@
     class={className.concat(" [&[contenteditable]]:focus:border-none [&[contenteditable]]:focus:outline-none [&[contenteditable]]:active:border-none [&[contenteditable]]:active:outline-none")}
     {...attributes}
     contenteditable={editFlag}
-    on:blur={updateNodeContent}>
+    on:blur={updateNodeContent}
+    on:paste={handlePaste}>
     <slot/>
 </svelte:element>
 {/key}

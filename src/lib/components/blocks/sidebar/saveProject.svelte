@@ -45,7 +45,7 @@
       submitRevision();
       
       // Create a Blob from the updated document content
-      const blob = new Blob([doc], { type: "text/xml" });
+      const blob = new Blob([doc], { type: "application/xml" });
 
       // Create a URL for the Blob
       const url = URL.createObjectURL(blob);
