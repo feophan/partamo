@@ -14,6 +14,9 @@
     function onRightClick(e: MouseEvent) {
         e.stopPropagation();
         $contextPosition = [e.clientX, e.clientY, e.target as Element];
+        console.log($contextPosition[2].nodeName);
+        const elTest = ['P', 'SPAN'];
+        console.log(!elTest[1].includes($contextPosition[2].nodeName));
     }
 
     // Use reactivity for flag changes

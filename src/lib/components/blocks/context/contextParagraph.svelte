@@ -14,6 +14,8 @@
 
     $: book = $xml;
 
+    const elTest = ['P', 'SPAN'];
+
     // Wrapping
 
     function wrapParagraph() {
@@ -93,7 +95,7 @@
     if ($contextPosition && book) { // Check if $contextPosition is not null
         paragraphId = $contextPosition[2].id; // Get the paragraph ID
         const paragraph = book.querySelector(`#${paragraphId}`); // Find paragraph in the XML document
-        paragraphContent = paragraph ? paragraph.innerHTML : ''; // Extract content to be edited
+        paragraphContent = paragraph ? paragraph.outerHTML : ''; // Extract content to be edited
 
         dialogOpen = true; // Open the dialog
     }
@@ -103,7 +105,7 @@
         paragraphContent = event.detail; // Update paragraphContent with the latest value from the editor
         const paragraph = book!.querySelector(`#${paragraphId}`);
         if (paragraph) {
-            paragraph.innerHTML = paragraphContent; // Update the XML content with new paragraph content
+            paragraph.outerHTML = paragraphContent; // Update the XML content with new paragraph content
             xml.set(book);
         }
     }
@@ -139,10 +141,10 @@
 
 {#if $contextPosition !== null}
 <div class="fixed z-10 top-32 left-32 bg-white rounded border border-gray-300" style="top: {$contextPosition[1]}px; left: {$contextPosition[0]}px">
-    <Item on:click={openEditor} disabled={$contextPosition[2].nodeName !== 'P'}><Pencil class="h-4 w-4"/>Edit</Item>
-    <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== 'P'}><Code class="h-4 w-4"/>Wrap</Item>
-    <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== 'SPAN'}><Link class="h-4 w-4"/>Link</Item>
-    <Item on:click={unlinkWord} disabled={$contextPosition[2].nodeName !== 'SPAN'}><LinkBreak class="h-4 w-4"/>Unlink</Item>
+    <Item on:click={openEditor} disabled={!elTest.includes($contextPosition[2].nodeName)}><Pencil class="h-4 w-4"/>Edit</Item>
+    <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== elTest[0]}><Code class="h-4 w-4"/>Wrap</Item>
+    <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== elTest[1]}><Link class="h-4 w-4"/>Link</Item>
+    <Item on:click={unlinkWord} disabled={$contextPosition[2].nodeName !== elTest[1]}><LinkBreak class="h-4 w-4"/>Unlink</Item>
 </div>
 {/if}
 
