@@ -5,6 +5,8 @@
     export let tag: string;
     export let node: Element;
 
+    $: node && node;
+
     let className;
     export { className as class };
 
