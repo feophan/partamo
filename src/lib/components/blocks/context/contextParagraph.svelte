@@ -4,10 +4,14 @@
 
     import { onMount, onDestroy } from "svelte";
 
+    import { toast } from "svelte-sonner";
+
     import Pencil from "svelte-radix/Pencil1.svelte";
     import Code from "svelte-radix/Code.svelte";
     import Link from "svelte-radix/Link2.svelte";
     import LinkBreak from "svelte-radix/LinkBreak2.svelte";
+    import File from "svelte-radix/File.svelte";
+    import Crump from "svelte-radix/CrumpledPaper.svelte";
 
     import Dialog from '../editorPanel.svelte'; // Import the dialog component
     import XMLEditor from '$lib/xml/XMLEditor.svelte'; // Import your XMLEditor component
@@ -137,6 +141,34 @@
         }
     }
 
+    // Add note
+
+    function addNote() {
+        if ($contextPosition && book) { // Check if $contextPosition is not null
+            const wordId = $contextPosition[2].id; // Get the word ID
+            const word = book.querySelector(`#${wordId}`); // Find word in the XML document
+            if (word && word.getAttribute('note') === null) {
+                word.setAttribute('note', '');
+                toast.success('Empty note added.');
+                xml.set(book);
+            } else if (word && word.getAttribute('note') !== null) {
+                toast.error('A note already exists.');
+            } else {toast.error('Word not found.')};
+        }
+    }
+
+    function removeNote() {
+        if ($contextPosition && book) { // Check if $contextPosition is not null
+            const wordId = $contextPosition[2].id; // Get the word ID
+            const word = book.querySelector(`#${wordId}`); // Find word in the XML document
+            if (word && word.getAttribute('note') !== null) {
+                word.removeAttribute('note');
+                xml.set(book);
+            } else {toast.error('Note or word not found.')};
+        }
+    }
+
+
 </script>
 
 {#if $contextPosition !== null}
@@ -145,6 +177,8 @@
     <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== elTest[0]}><Code class="h-4 w-4"/>Wrap</Item>
     <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== elTest[1]}><Link class="h-4 w-4"/>Link</Item>
     <Item on:click={unlinkWord} disabled={$contextPosition[2].nodeName !== elTest[1]}><LinkBreak class="h-4 w-4"/>Unlink</Item>
+    <Item on:click={addNote} disabled={$contextPosition[2].nodeName !== elTest[1]}><File class="h-4 w-4"/>Add note</Item>
+    <Item on:click={removeNote} disabled={$contextPosition[2].nodeName !== elTest[1]}><Crump class="h-4 w-4"/>Delete note</Item>
 </div>
 {/if}
 

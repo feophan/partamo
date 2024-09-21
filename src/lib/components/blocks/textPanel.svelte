@@ -1,6 +1,6 @@
 <script lang="ts">
     import { XML } from '$lib/index.js';
-    import { lang, contextPosition, linkFlag } from '$lib/stores.js';
+    import { lang, contextPosition, linkFlag, notePosition } from '$lib/stores.js';
     import { tick } from 'svelte'; // Import tick to wait for DOM updates
 
     $: lg = $lang.length;
@@ -8,16 +8,26 @@
     $: newLang = '';
 
     import Context from '$lib/components/blocks/context/contextParagraph.svelte';
+    import Note from '$lib/components/blocks/context/contextWord.svelte';
     import Create from './createLang.svelte';
     import { Input } from '$lib/components/ui/input/index.js';
 
     function onRightClick(e: MouseEvent) {
         e.stopPropagation();
         $contextPosition = [e.clientX, e.clientY, e.target as Element];
-        console.log($contextPosition[2].nodeName);
-        const elTest = ['P', 'SPAN'];
-        console.log(!elTest[1].includes($contextPosition[2].nodeName));
     }
+
+    function onLeftClick(e: MouseEvent) {
+    e.stopPropagation();
+    $contextPosition = null;
+
+    const target = e.target as Element; // Type assertion here
+    if (target.nodeName === 'SPAN') {
+        $notePosition = [e.clientX, e.clientY, target];
+    } else {
+        $notePosition = null;
+    }
+}
 
     // Use reactivity for flag changes
     $: if ($linkFlag[0] === true) {
@@ -46,10 +56,12 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events-->
 
 {#if lg > 0}
 <Context />
-<div on:contextmenu|preventDefault={onRightClick}
+<Note />
+<div on:contextmenu|preventDefault={onRightClick} on:click={onLeftClick}
     class="grid {lg === 1 ? 'grid-cols-1' : 'grid-cols-2 gap-x-10'} col-span-6 gap-y-2 px-10">
     <XML />
 </div>

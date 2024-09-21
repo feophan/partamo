@@ -3,10 +3,15 @@
 	import Panel from '$lib/components/blocks/textPanel.svelte';
 	import Project from '$lib/components/blocks/sidebar/openProject.svelte';
 	import Create from "$lib/components/blocks/createPar.svelte";
-	import { contextPosition, xml } from '$lib/stores.js';
+	import { contextPosition, notePosition, xml } from '$lib/stores.js';
 
-	function onBodyClick() {
+	function onBodyClick(event: MouseEvent) {
 		$contextPosition = null;
+
+		const notePopup = document.getElementById('note-popup');
+		if (notePopup && !notePopup.contains(event.target as Node)) {
+			$notePosition = null;
+		}
 	}
 </script>
 
