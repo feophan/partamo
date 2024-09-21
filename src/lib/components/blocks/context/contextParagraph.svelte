@@ -20,43 +20,45 @@
         if ($contextPosition !== null) {
             const paragraph = $contextPosition[2];
             if (book && paragraph.nodeName === "P") {
-            const textContent = paragraph.textContent || "";
+                const textContent = paragraph.textContent || "";
 
-            // Use regex to match words with optional hyphens, punctuation, and spaces separately
-            const words = textContent.match(/[\p{L}\p{M}'-]+|[\p{P}\p{S}]+|\s+/gu) || [];
+                // Use regex to match words, including single-letter accented characters and numbers
+                const words = textContent.match(/[\p{L}\p{M}'\d-]+|[\p{P}\p{S}]+|\s+/gu) || [];
 
-            let wordIndex = 1; // To keep track of word indexes only
+                let wordIndex = 1; // To keep track of word indexes
 
-            const newPar = book.createElement("p");
-            newPar.setAttribute('n', paragraph.getAttribute('data-n') || '');
-            newPar.setAttribute('id', paragraph.getAttribute('id') || '');
-            words.forEach((word) => {
-                if (/[\w'-]+/.test(word)) {
-                    // Create a <w> element for each word
-                    const wElement = book.createElement("w");
-                    wElement.setAttribute("id", `${paragraph.id}-${wordIndex}`);
-                    wElement.textContent = word;
-                    newPar.appendChild(wElement);
-                    wordIndex++;
+                const newPar = book.createElement("p");
+                newPar.setAttribute('n', paragraph.getAttribute('data-n') || '');
+                newPar.setAttribute('id', paragraph.getAttribute('id') || '');
+
+                words.forEach((word) => {
+                    if (/[\p{L}\p{M}\d'-]+/u.test(word)) {
+                        // Create a <w> element for each word or number
+                        const wElement = book.createElement("w");
+                        wElement.setAttribute("id", `${paragraph.id}-${wordIndex}`);
+                        wElement.textContent = word;
+                        newPar.appendChild(wElement);
+                        wordIndex++;
+                    } else {
+                        // Append punctuation and spaces directly as text nodes
+                        const textNode = book.createTextNode(word);
+                        newPar.appendChild(textNode);
+                    }
+                });
+
+                const wrappedParagraph = book!.getElementById(paragraph.id);
+                if (wrappedParagraph) {
+                    wrappedParagraph.replaceWith(newPar);
+                    xml.set(book); // Only update if book and paragraph are valid
                 } else {
-                    // Append punctuation and spaces directly as text nodes
-                    const textNode = book.createTextNode(word);
-                    newPar.appendChild(textNode);
+                    console.error(`Paragraph with id ${paragraph.id} not found in the document.`);
                 }
-            });
-            
-            const wrappedParagraph = book!.getElementById(paragraph.id);
-            if (wrappedParagraph) {
-                wrappedParagraph.replaceWith(newPar);
-                xml.set(book); // Only update if book and paragraph are valid
             } else {
-                console.error(`Paragraph with id ${paragraph.id} not found in the document.`);
+                console.error('Book is null or paragraph node is not a P element.');
             }
-        } else {
-        console.error('Book is null or paragraph node is not a P element.');
         }
-        };
-    };
+    }
+
 
     // Linking
 
