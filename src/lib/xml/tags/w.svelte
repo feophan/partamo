@@ -5,8 +5,6 @@
     export let tag: string;
     export let node: Element;
 
-    $: node && node;
-
     let className;
     export { className as class };
 
@@ -54,13 +52,16 @@
             }
         }
     }
+
+    let allClass = $linkFlag[0] ? className.concat(" cursor-pointer") : className;
+    allClass = node.hasAttribute('note') ? allClass.concat(" underline decoration-indigo-500 decoration-dotted") : allClass;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events-->
 <svelte:element
     this={tag}
-    class={$linkFlag[0] ? className.concat(" cursor-pointer") : className}
+    class={allClass}
     {...attributes}
     on:mouseover={e => handleRefHighlight(e, 'add')}
     on:mouseleave={e => handleRefHighlight(e, 'remove')}
