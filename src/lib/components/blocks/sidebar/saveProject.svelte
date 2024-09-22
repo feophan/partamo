@@ -25,14 +25,13 @@
                 const minorVersionAttr = version.getAttribute('minor');
                 const majorVersionAttr = version.getAttribute('major');
                 if (minorVersionAttr !== null) {
-                    minorVersion = minorVersionAttr; // Update minor version for file name
-                    majorVersion = majorVersionAttr; // Update minor version for file name
                     let vMinor = parseInt(minorVersionAttr, 10); // Ensure to use base 10
                     vMinor += 1; // Increment the minor version (instead of doubling it)
                     version.setAttribute('minor', vMinor.toString());                    
                     // Update the xml store to reflect this change
                     xml.set(book); // This updates the store with the modified document
-  
+                    minorVersion = vMinor.toString(); // Update minor version for file name
+                    majorVersion = majorVersionAttr; // Update major version for file name
                     // Update the doc variable with the new XML content
                     doc = book.documentElement.outerHTML;
                 } else {
@@ -57,7 +56,7 @@
         const url = URL.createObjectURL(blob);
   
         // Create the new file name by appending the version before the extension
-        const versionedName = minorVersion ? (name.replace(/_v\d+-\d+\.xml$/, '').replace(/\.xml$/, '') + `_v${majorVersion}-${minorVersion}.xml`) : name;
+        const versionedName = minorVersion ? (name.replace(/_v\d+-\d+\.xml$/, '').replace(/\.xml$/, '') + `v${majorVersion}-${minorVersion}.xml`) : name;
   
         // Create a temporary link element
         const a = document.createElement("a");
@@ -84,4 +83,4 @@
       <Tooltip.Content>
           <p>Save project</p>
       </Tooltip.Content>
-  </Tooltip.Root>  
+  </Tooltip.Root>

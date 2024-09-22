@@ -36,8 +36,6 @@
         adjustedLeft = $contextPosition[0] + popoverWidth > windowWidth
             ? windowWidth - popoverWidth - 20 // 10px padding from the right edge
             : $contextPosition[0];
-
-        console.log('Adjusted left position:', adjustedLeft);
     }
 
     const elTest = ['P', 'SPAN'];
@@ -162,7 +160,7 @@
             const word = book.querySelector(`#${wordId}`); // Find word in the XML document
             if (word && word.getAttribute('note') === null) {
                 word.setAttribute('note', '');
-                $contextPosition[2].classList.add("underline", "decoration-indigo-500", "decoration-dotted");
+                $contextPosition[2].classList.add("underline", "decoration-indigo-500", "decoration-2");
                 toast.success('Empty note added.');
                 xml.set(book);
             } else if (word && word.getAttribute('note') !== null) {

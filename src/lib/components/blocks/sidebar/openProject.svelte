@@ -46,13 +46,13 @@
 {#if $fileUploaded }
 <Tooltip.Root>
     <Tooltip.Trigger>
-        <label for="project" class={`${buttonVariants({ variant: "ghost", size: "icon" })} text-primary-foreground hover:text-secondary-foreground`}>
+        <label for="project-menu" class={`${buttonVariants({ variant: "ghost", size: "icon" })} text-primary-foreground hover:text-secondary-foreground`}>
             <Upload class="w-4 h-4"/>
         </label>
         <input
             accept=".xml"
             bind:files
-            id="project"
+            id="project-menu"
             name="project"
             type="file"
             style="display:none"
@@ -67,11 +67,11 @@
     <div class="flex flex-row gap-4">
         <Create />
         <div>
-            <label for="project" class={buttonVariants({ variant: "outline" })}>Open Project</label>
+            <label for="project-panel" class={buttonVariants({ variant: "outline" })}>Open Project</label>
             <input
                 accept=".xml"
                 bind:files
-                id="project"
+                id="project-panel"
                 name="project"
                 type="file"
                 style="display:none"

@@ -97,13 +97,13 @@
             <Table.Head>
                 <div class="flex flex-row gap-2 items-baseline">
                     {fromLang?.label}
-                    <Input type="text" bind:value={wordAFilter} placeholder="search" class="w-24"/>
+                    <Input id="wordA" type="text" bind:value={wordAFilter} placeholder="search" class="w-24"/>
                 </div>
             </Table.Head>
             <Table.Head>
                 <div class="flex flex-row gap-2 items-baseline">
                     {toLang?.label}
-                    <Input type="text" bind:value={refsFilter} placeholder="search" class="w-24" />
+                    <Input id="glossB" type="text" bind:value={refsFilter} placeholder="search" class="w-24" />
                 </div>
             </Table.Head>
         </Table.Row>

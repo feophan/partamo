@@ -54,7 +54,7 @@
     }
 
     let allClass = $linkFlag[0] ? className.concat(" cursor-pointer") : className;
-    allClass = node.hasAttribute('note') ? allClass.concat(" underline decoration-indigo-500 decoration-dotted") : allClass;
+    allClass = node.hasAttribute('note') ? allClass.concat(" underline decoration-indigo-500 decoration-2") : allClass;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->

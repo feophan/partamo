@@ -36,7 +36,7 @@
     function removeNote() {
         if ($notePosition && book) {
             const wordId = $notePosition[2].id;
-            $notePosition[2].classList.remove("underline", "decoration-indigo-500", "decoration-dotted");
+            $notePosition[2].classList.remove("underline", "decoration-indigo-500", "decoration-2");
             const word = book.querySelector(`#${wordId}`);
             if (word && word.getAttribute('note') !== null) {
                 word.removeAttribute('note');
