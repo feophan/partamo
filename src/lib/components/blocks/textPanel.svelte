@@ -62,7 +62,7 @@
 <Context />
 <Note />
 <div on:contextmenu|preventDefault={onRightClick} on:click={onLeftClick}
-    class="grid {lg === 1 ? 'grid-cols-1' : 'grid-cols-2 gap-x-10'} col-span-6 gap-y-2 px-10">
+    class="grid {lg === 1 ? 'grid-cols-1' : 'grid-cols-2 gap-x-10'} col-span-6 gap-y-2 px-12">
     <XML />
 </div>
 {:else}

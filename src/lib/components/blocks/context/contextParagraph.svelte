@@ -17,6 +17,29 @@
 
     $: book = $xml;
 
+    let adjustedLeft = 0;
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
+
+    $: if ($contextPosition) {
+        // Get popover width dynamically
+        const popover = document.getElementById('contextMenu');
+        const popoverWidth = 116;
+        // Adjust the left position if it overflows the window width
+        const windowWidth = window.innerWidth;
+        adjustedLeft = $contextPosition[0] + popoverWidth > windowWidth
+            ? windowWidth - popoverWidth - 20 // 10px padding from the right edge
+            : $contextPosition[0];
+
+        console.log('Adjusted left position:', adjustedLeft);
+    }
+
     const elTest = ['P', 'SPAN'];
 
     // Wrapping
@@ -64,7 +87,6 @@
         }
     }
 
-
     // Linking
 
     function linkWords() {
@@ -79,14 +101,6 @@
             $linkFlag[0] = false; // Reset the link flag
         }
     }
-
-    onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-    });
-
-    onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-    });
 
     // Editor
 
@@ -160,7 +174,7 @@
 </script>
 
 {#if $contextPosition !== null}
-<div class="fixed z-10 top-32 left-32 bg-white rounded border border-gray-300" style="top: {$contextPosition[1]}px; left: {$contextPosition[0]}px">
+<div id="contextMenu" class="fixed z-10 top-32 left-32 bg-white rounded border border-gray-300" style="top: {$contextPosition[1]}px; left: {adjustedLeft}px">
     <Item on:click={openEditor} disabled={!elTest.includes($contextPosition[2].nodeName)}><Pencil class="h-4 w-4"/>Edit</Item>
     <Item on:click={wrapParagraph} disabled={$contextPosition[2].nodeName !== elTest[0]}><Code class="h-4 w-4"/>Wrap</Item>
     <Item on:click={linkWords} disabled={$contextPosition[2].nodeName !== elTest[1]}><Link class="h-4 w-4"/>Link</Item>
