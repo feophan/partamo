@@ -56,16 +56,18 @@
 
 <div class="py-2 flex flex-col items-start mx-2">
     <h2 class="mb-2 px-2 text-lg font-semibold tracking-tight">Content</h2>
-        <div class="space-y-1 overflow-auto max-h-[60vh] scrollbar hover:scrollbar-thumb-secondary/40 active:scrollbar-thumb-secondary/60 scrollbar-thumb-secondary/20 scrollbar-thumb-rounded-full scrollbar-w-2">
-            {#if root && root.length > 0}
-                {#each [...root] as chap, i}
-                    <Button on:click={() => chapSelect(getChapterNumber(chap))} variant="ghost" class="w-full px-2 justify-start justify-items-start">
-                        {@html chap.children[0] ? chap.children[0].innerHTML : `${i+1}`}
-                    </Button>
-                {/each}
-            {:else}
-                <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
-            {/if}
+        <div style={"overflow-anchor: none !important;"} class="space-y-1 flex flex-col-reverse overflow-auto max-h-[60vh] scrollbar hover:scrollbar-thumb-secondary/60 active:scrollbar-thumb-secondary/80 scrollbar-thumb-secondary/40 scrollbar-thumb-rounded-full scrollbar-w-2">
+            <div>
+                {#if root && root.length > 0}
+                    {#each [...root] as chap, i}
+                        <Button on:click={() => chapSelect(getChapterNumber(chap))} variant="ghost" style={"overflow-anchor: auto !important;"} class="w-full h-full px-2 justify-start justify-items-start">
+                            {@html chap.children[0] ? chap.children[0].innerHTML : `${i+1}`}
+                        </Button>
+                    {/each}
+                {:else}
+                    <p class="w-full px-2 justify-start justify-items-start">No chapters available</p>
+                {/if}
+            </div>
         </div>
     <Create />
 </div>

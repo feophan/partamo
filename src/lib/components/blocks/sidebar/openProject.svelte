@@ -24,8 +24,6 @@
             xml.set(doc);
             fileUploaded.set(true); // Set the fileUploaded store to true
             fileName.set(files[0].name);
-            // console.log(files[0].name.replace(/\.xml$/, ""));
-
             // Manually reset the file input value to allow the same file to be selected again
             fileInput.value = '';
         }
